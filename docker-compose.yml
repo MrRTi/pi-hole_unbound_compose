@@ -1,0 +1,59 @@
+version: "3.7"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    build:
+      context: .
+      args:
+        - PIHOLE_VERSION
+    image: pihole_unbound
+    container_name: pihole_unbound
+    hostname: ${PIHOLE_HOSTNAME}
+    domainname: ${PIHOLE_DOMAIN_NAME}
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - 443:443/tcp
+      - 53:53/tcp
+      - 53:53/udp
+      - ${PIHOLE_WEBPORT:-80}:80/tcp
+    environment:
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
+      TZ: ${TZ}
+      # PROXY_LOCATION: pihole
+      PIHOLE_DNS_: 127.0.0.1#5335
+      DNSSEC: "true"
+      DNSMASQ_LISTENING: single
+      REV_SERVER: ${REV_SERVER:-false}
+      REV_SERVER_TARGET: ${REV_SERVER_TARGET}
+      REV_SERVER_DOMAIN: ${REV_SERVER_DOMAIN}
+      REV_SERVER_CIDR: ${REV_SERVER_CIDR}
+      # https://docs.pi-hole.net/ftldns/configfile/
+      # FTLCONF_CHECK_DISK: 0 # For MacOS https://github.com/pi-hole/docker-pi-hole/issues/951
+      FTLCONF_PRIVACYLEVEL: ${PRIVACYLEVEL}
+      FTLCONF_MAXDBDAYS: ${MAXDBDAYS}
+    volumes:
+      - etc-pihole:/etc/pihole
+      - ./config/dnsmasq.d/99-edns.conf:/etc/dnsmasq.d/99-edns.conf
+      # - ./config/unbound/unbound.conf.d/pi-hole.conf:/etc/unbound/unbound.conf.d/pi-hole.conf
+      - ./log/:/var/log/
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    # cap_add:
+    #   - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    restart: always
+
+  pihole_exporter:
+    image: ekofr/pihole-exporter:${PIHOLE_EXPORTER_VERSION-:latest}
+    container_name: pihole_exporter
+    ports:
+      - 9617:${PIHOLE_EXPORTER_PORT}
+    environment:
+      PIHOLE_HOSTNAME: ${PIHOLE_IP}
+      PIHOLE_PORT: ${PIHOLE_WEBPORT}
+      PIHOLE_API_TOKEN: ${PIHOLE_API_TOKEN}
+      INTERVAL: 30s
+      PORT: ${PIHOLE_EXPORTER_PORT}
+    restart: always
+
+volumes:
+  etc-pihole:
