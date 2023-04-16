@@ -8,7 +8,9 @@ COPY config/lighttpd/external.conf /etc/lighttpd/external.conf
 COPY config/unbound/unbound.conf.d/pi-hole.conf /etc/unbound/unbound.conf.d/pi-hole.conf
 COPY config/resolv.conf /etc/resolv.conf
 
+RUN mkdir -p /var/log/unbound
 RUN mkdir -p /etc/services.d/unbound
+
 COPY config/unbound/run /etc/services.d/unbound/run
 RUN chmod a+xwr /etc/services.d/unbound/run
 

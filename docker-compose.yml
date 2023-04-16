@@ -35,8 +35,11 @@ services:
     volumes:
       - etc-pihole:/etc/pihole
       - ./config/dnsmasq.d/99-edns.conf:/etc/dnsmasq.d/99-edns.conf
-      # - ./config/unbound/unbound.conf.d/pi-hole.conf:/etc/unbound/unbound.conf.d/pi-hole.conf
-      - ./log/:/var/log/
+      - ./config/resolv.conf/:/etc/resolv.conf
+        # - ./config/unbound/unbound.conf.d/pi-hole.conf:/etc/unbound/unbound.conf.d/pi-hole.conf
+      - ./log/lighttpd:/var/log/lighttpd
+      - ./log/pihole:/var/log/pihole
+        # - ./log/unbound:/var/log/unbound
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     # cap_add:
     #   - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
