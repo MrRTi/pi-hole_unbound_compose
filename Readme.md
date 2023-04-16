@@ -5,8 +5,10 @@
 - https://github.com/pi-hole/docker-pi-hole
 
 ## Unbound
-
 - https://docs.pi-hole.net/guides/dns/unbound/
 
 ## Prometheus exporter
 - https://github.com/eko/pihole-exporter/
+
+## Block lists
+- https://firebog.net
