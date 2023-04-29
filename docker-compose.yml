@@ -57,6 +57,8 @@ services:
       INTERVAL: 30s
       PORT: ${PIHOLE_EXPORTER_PORT}
     restart: always
+    profiles:
+      - prometheus
 
 volumes:
   etc-pihole:
